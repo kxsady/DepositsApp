@@ -61,9 +61,12 @@ class MainActivity : ComponentActivity() {
 fun DepTimeLayout() {
     var amountInput by remember { mutableStateOf("") }
     var roundUp by remember { mutableStateOf(false) }
+    var value3 by remember { mutableStateOf(false) }
+    var value5 by remember { mutableStateOf(false) }
+    var value9 by remember { mutableStateOf(false) }
 
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val dep = calculateDep(amount)
+    val dep = calculateDep(amount, value3, value5, value9)
 
     val focusManager = LocalFocusManager.current
 
@@ -85,7 +88,7 @@ fun DepTimeLayout() {
             leadingIcon = R.drawable.money,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Send
             ),
             value = amountInput,
             onValueChanged = { amountInput = it },
@@ -101,18 +104,18 @@ fun DepTimeLayout() {
         )
 
         threemonth(
-            roundUp = roundUp,
-            onRoundUpChanged = { roundUp = it },
+            value3 = value3,
+            onRoundUpChanged = { value3 = it },
             modifier = Modifier.padding(bottom = 32.dp)
         )
         sixmonth(
-            roundUp = roundUp,
-            onRoundUpChanged = { roundUp = it },
+            value5 = value5,
+            onRoundUpChanged = { value5 = it },
             modifier = Modifier.padding(bottom = 32.dp)
         )
         year(
-            roundUp = roundUp,
-            onRoundUpChanged = { roundUp = it },
+            value9 = value9,
+            onRoundUpChanged = { value9 = it },
             modifier = Modifier.padding(bottom = 32.dp)
         )
         Text(
@@ -145,7 +148,7 @@ fun EditNumberField(
 
 @Composable
 fun threemonth(
-    roundUp: Boolean,
+    value3: Boolean,
     onRoundUpChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -156,7 +159,7 @@ fun threemonth(
     ) {
         Text(text = stringResource(R.string.threemonthdep))
         RadioButton(
-            selected = roundUp,
+            selected = value3,
             onClick = { onRoundUpChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -166,7 +169,7 @@ fun threemonth(
 }
 @Composable
 fun sixmonth(
-    roundUp: Boolean,
+    value5: Boolean,
     onRoundUpChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -177,7 +180,7 @@ fun sixmonth(
     ) {
         Text(text = stringResource(R.string.sixmonthdep))
         RadioButton(
-            selected = roundUp,
+            selected = value5,
             onClick = { onRoundUpChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -187,7 +190,7 @@ fun sixmonth(
 }
 @Composable
 fun year(
-    roundUp: Boolean,
+    value9: Boolean,
     onRoundUpChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -198,7 +201,7 @@ fun year(
     ) {
         Text(text = stringResource(R.string.yeardep))
         RadioButton(
-            selected = roundUp,
+            selected = value9,
             onClick = { onRoundUpChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -207,8 +210,14 @@ fun year(
     }
 }
 
-private fun calculateDep(amount: Double, depPercent: Double = 3.0): String {
-    val dep = depPercent / 100 * amount
+private fun calculateDep(amount: Double, value3:Boolean, value5: Boolean, value9: Boolean): String {
+    var dep = amount
+    if (value3)
+        dep = 3.0 / 100 * amount
+    if (value5)
+        dep = 5.0 / 100 * amount
+    if (value9)
+        dep = 9.0 / 100 * amount
     return NumberFormat.getCurrencyInstance().format(dep)
 }
 
