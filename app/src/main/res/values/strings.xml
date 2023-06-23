@@ -1,3 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <string name="app_name">DepositsApp</string>
+    <string name="app_name">Доход по вкладу</string>
+    <string name="threemonthdep">3 месяца (3%)</string>
+    <string name="calculate_dep">Доход по вкладу</string>
+    <string name="dep_amount">Введите сумму вклада</string>
+    <string name="amount">Получить: %s</string>
+    <string name="sixmonthdep">6 месяцев (5%)</string>
+    <string name="yeardep">Год (9%)</string>
 </resources>
