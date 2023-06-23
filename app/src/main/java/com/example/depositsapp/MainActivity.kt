@@ -1,5 +1,6 @@
 package com.example.depositsapp
 
+import DepositViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -38,9 +39,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import com.example.depositsapp.ui.theme.DepositsAppTheme
 import java.text.NumberFormat
 
+val viewModel = DepositViewModel(SavedStateHandle())
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +63,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DepTimeLayout() {
     var amountInput by remember { mutableStateOf("") }
-    var roundUp by remember { mutableStateOf(false) }
-    var value3 by remember { mutableStateOf(false) }
-    var value5 by remember { mutableStateOf(false) }
-    var value9 by remember { mutableStateOf(false) }
+    var selectedValue by remember { mutableStateOf(0) }
 
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val dep = calculateDep(amount, value3, value5, value9)
+    val dep = calculateDep(amount, selectedValue)
 
     val focusManager = LocalFocusManager.current
 
@@ -88,7 +88,7 @@ fun DepTimeLayout() {
             leadingIcon = R.drawable.money,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Send
+                imeAction = ImeAction.Next
             ),
             value = amountInput,
             onValueChanged = { amountInput = it },
@@ -104,18 +104,18 @@ fun DepTimeLayout() {
         )
 
         threemonth(
-            value3 = value3,
-            onRoundUpChanged = { value3 = it },
+            selected = selectedValue == 3,
+            onSelectedChanged = { if (it) selectedValue = 3 },
             modifier = Modifier.padding(bottom = 32.dp)
         )
         sixmonth(
-            value5 = value5,
-            onRoundUpChanged = { value5 = it },
+            selected = selectedValue == 5,
+            onSelectedChanged = { if (it) selectedValue = 5 },
             modifier = Modifier.padding(bottom = 32.dp)
         )
         year(
-            value9 = value9,
-            onRoundUpChanged = { value9 = it },
+            selected = selectedValue == 9,
+            onSelectedChanged = { if (it) selectedValue = 9 },
             modifier = Modifier.padding(bottom = 32.dp)
         )
         Text(
@@ -148,8 +148,8 @@ fun EditNumberField(
 
 @Composable
 fun threemonth(
-    value3: Boolean,
-    onRoundUpChanged: (Boolean) -> Unit,
+    selected: Boolean,
+    onSelectedChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -159,8 +159,8 @@ fun threemonth(
     ) {
         Text(text = stringResource(R.string.threemonthdep))
         RadioButton(
-            selected = value3,
-            onClick = { onRoundUpChanged(true) },
+            selected = selected,
+            onClick = { onSelectedChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End)
@@ -169,8 +169,8 @@ fun threemonth(
 }
 @Composable
 fun sixmonth(
-    value5: Boolean,
-    onRoundUpChanged: (Boolean) -> Unit,
+    selected: Boolean,
+    onSelectedChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -180,8 +180,8 @@ fun sixmonth(
     ) {
         Text(text = stringResource(R.string.sixmonthdep))
         RadioButton(
-            selected = value5,
-            onClick = { onRoundUpChanged(true) },
+            selected = selected,
+            onClick = { onSelectedChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End)
@@ -190,8 +190,8 @@ fun sixmonth(
 }
 @Composable
 fun year(
-    value9: Boolean,
-    onRoundUpChanged: (Boolean) -> Unit,
+    selected: Boolean,
+    onSelectedChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -201,8 +201,8 @@ fun year(
     ) {
         Text(text = stringResource(R.string.yeardep))
         RadioButton(
-            selected = value9,
-            onClick = { onRoundUpChanged(true) },
+            selected = selected,
+            onClick = { onSelectedChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End)
@@ -210,14 +210,13 @@ fun year(
     }
 }
 
-private fun calculateDep(amount: Double, value3:Boolean, value5: Boolean, value9: Boolean): String {
-    var dep = amount
-    if (value3)
-        dep = 3.0 / 100 * amount
-    if (value5)
-        dep = 5.0 / 100 * amount
-    if (value9)
-        dep = 9.0 / 100 * amount
+private fun calculateDep(amount: Double, selectedValue: Int): String {
+    val dep = when (selectedValue) {
+        3 -> 3.0 / 100 * amount
+        5 -> 5.0 / 100 * amount
+        9 -> 9.0 / 100 * amount
+        else -> amount
+    }
     return NumberFormat.getCurrencyInstance().format(dep)
 }
 
