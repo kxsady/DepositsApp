@@ -8,4 +8,5 @@
     <string name="amount">Получить: %s</string>
     <string name="sixmonthdep">6 месяцев (5%)</string>
     <string name="yeardep">Год (9%)</string>
+    <string name="date_dep">Срок</string>
 </resources>

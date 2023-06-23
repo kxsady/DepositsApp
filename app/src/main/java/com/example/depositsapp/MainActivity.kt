@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -92,6 +93,13 @@ fun DepTimeLayout() {
                 .padding(bottom = 32.dp)
                 .fillMaxWidth(),
         )
+        Text(
+            text = stringResource(R.string.date_dep),
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .align(alignment = Alignment.Start)
+        )
+
         threemonth(
             roundUp = roundUp,
             onRoundUpChanged = { roundUp = it },
@@ -147,12 +155,12 @@ fun threemonth(
             .size(48.dp),
     ) {
         Text(text = stringResource(R.string.threemonthdep))
-        Switch(
+        RadioButton(
+            selected = roundUp,
+            onClick = { onRoundUpChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentWidth(Alignment.End),
-            checked = roundUp,
-            onCheckedChange = onRoundUpChanged
+                .wrapContentWidth(Alignment.End)
         )
     }
 }
@@ -168,12 +176,12 @@ fun sixmonth(
             .size(48.dp),
     ) {
         Text(text = stringResource(R.string.sixmonthdep))
-        Switch(
+        RadioButton(
+            selected = roundUp,
+            onClick = { onRoundUpChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentWidth(Alignment.End),
-            checked = roundUp,
-            onCheckedChange = onRoundUpChanged
+                .wrapContentWidth(Alignment.End)
         )
     }
 }
@@ -189,17 +197,17 @@ fun year(
             .size(48.dp),
     ) {
         Text(text = stringResource(R.string.yeardep))
-        Switch(
+        RadioButton(
+            selected = roundUp,
+            onClick = { onRoundUpChanged(true) },
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentWidth(Alignment.End),
-            checked = roundUp,
-            onCheckedChange = onRoundUpChanged
+                .wrapContentWidth(Alignment.End)
         )
     }
 }
 
-private fun calculateDep(amount: Double, depPercent: Double = 15.0): String {
+private fun calculateDep(amount: Double, depPercent: Double = 3.0): String {
     val dep = depPercent / 100 * amount
     return NumberFormat.getCurrencyInstance().format(dep)
 }
